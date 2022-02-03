@@ -6,19 +6,25 @@ This repo contains the reference implementation of detcyclegan in Pytorch, for t
 >
 > Lalith Sharan, Gabriele Romano, Sven Koehler, Halvar Kelm, Matthias Karck, Raffaele De Simone, Sandy Engelhardt  
 >
-> [Accepted, IEEE JBHI 2021](https://arxiv.org/abs/2107.06941)
+> [Accepted, IEEE JBHI 2021](https://ieeexplore.ieee.org/document/9496194)
 
 Please see the [license file](LICENSE) for terms os use of this repo.
 If you find our work useful in your research please consider citing our paper:
 
 ```
-@misc{sharan2021mutually,
-      title={Mutually improved endoscopic image synthesis and landmark detection in unpaired image-to-image translation},
-      author={Lalith Sharan and Gabriele Romano and Sven Koehler and Halvar Kelm and Matthias Karck and Raffaele De Simone and Sandy Engelhardt},
-      year={2021},
-      eprint={2107.06941},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{sharan_mutually_2021,
+	title = {Mutually improved endoscopic image synthesis and landmark detection in unpaired image-to-image translation},
+	issn = {2168-2208},
+	doi = {10.1109/JBHI.2021.3099858},
+	journal = {IEEE Journal of Biomedical and Health Informatics},
+	author = {Sharan, Lalith and Romano, Gabriele and Koehler, Sven and Kelm, Halvar and Karck, Matthias and De Simone,
+	Raffaele and Engelhardt, Sandy},
+	year = {2021},
+	note = {Conference Name: IEEE Journal of Biomedical and Health Informatics},
+	keywords = {CycleGAN, Generative adversarial networks, Generative Adversarial Networks, Landmark Detection, Landmark
+	Localization, Maintenance engineering, Mitral Valve Repair, Semantics, Surgery, Surgical Simulation, Surgical
+	Training, Task analysis, Training, Valves},
+	pages = {1--1},
 }
 ```
 
