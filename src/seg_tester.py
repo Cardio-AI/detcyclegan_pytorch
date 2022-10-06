@@ -21,7 +21,7 @@ from models import UNet
 from dataloader import MonoDatasetWithMask
 
 # Imports from endo utils project
-sys.path.append(os.path.abspath("../endo_utils/data_utils/"))
+sys.path.append(os.path.abspath("../ext/endo_utils/data_utils/"))
 import process_utils
 import io_utils
 

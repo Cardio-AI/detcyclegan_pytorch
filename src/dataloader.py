@@ -6,11 +6,10 @@ import random
 import numpy as np
 from torchvision.transforms import functional as func
 
-
 from torchvision import transforms
 from torch.utils.data import Dataset
 
-sys.path.append(os.path.abspath("../../endo_utils/data_utils/"))
+sys.path.append(os.path.abspath("../ext/endo_utils/data_utils/"))
 import io_utils
 import process_utils
 

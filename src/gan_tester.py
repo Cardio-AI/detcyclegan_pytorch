@@ -14,7 +14,6 @@ import itertools
 from PIL import Image
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from tensorboardX import SummaryWriter
 from torch.autograd import Variable
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
@@ -31,12 +30,12 @@ from natsort import natsorted
 # Imports from current project
 import utils
 import losses
-from models import Generator, Generator_new_cp, Generator_new
+from models import Generator, Generator_new
 from models import Discriminator
 from dataloader import MonoDatasetWithMaskTwoDomains, MonoDatasetWithMask
 
 # Imports from endo utils project
-sys.path.append(os.path.abspath("../endo_utils/data_utils/"))
+sys.path.append(os.path.abspath("../ext/endo_utils/data_utils/"))
 import io_utils
 import process_utils
 
