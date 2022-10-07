@@ -193,6 +193,10 @@ class TestingOptions:
                                  type=str,
                                  help="Path to experiment that has to be loaded")
 
+        self.parser.add_argument("--pred_images_dir",
+                                 type=str,
+                                 help="path to folder containing the images for prediction")
+
         self.parser.add_argument("--split_dir",
                                  type=str,
                                  help="split directory",

@@ -5,7 +5,7 @@ import numpy as np
 import random
 
 # Imports from endo utils project
-sys.path.append(os.path.abspath("../ext/endo_utils/data_utils/"))
+sys.path.append(os.path.abspath("./ext/endo_utils/data_utils/"))
 import process_utils
 import io_utils
 
