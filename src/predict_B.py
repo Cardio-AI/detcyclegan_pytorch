@@ -34,7 +34,7 @@ import utils
 import losses
 from models import Generator, Generator_new
 from models import Discriminator
-from dataloader import MonoDatasetWithMaskTwoDomains, MonoDatasetWithMask
+from dataloader import MonoDatasetWithMaskTwoDomains, MonoDatasetWithMask, MonoPredictionDataset
 
 # Imports from endo utils project
 sys.path.append(os.path.abspath("../ext/endo_utils/data_utils/"))
@@ -82,17 +82,23 @@ class GanTester:
         Load models
         """
         self.netG_A2B = Generator_new(f=32, blocks=6).to(self.device)
+        self.netG_B2A = Generator_new(f=32, blocks=6).to(self.device)
+
         self.netG_A2B.load_state_dict(torch.load(os.path.join(self.model_path, "netG_A2B.pth")))  # load state dicts
+        self.netG_B2A.load_state_dict(torch.load(os.path.join(self.model_path, "netG_B2A.pth")))
+
         self.netG_A2B.eval()  # set model to eval mode
+        self.netG_B2A.eval()
 
         """
         Load data
         """
+
         self.test_filenames_A = glob.glob(os.path.join(self.opt.pred_images_dir, '*.png'))
+        print(self.test_filenames_A)
 
         # define training dataset for domain A
-        self.test_dataset_A = MonoDatasetWithMask(data_root_folder=self.opt.dataroot_A,
-                                                  filenames=self.test_filenames_A,
+        self.test_dataset_A = MonoPredictionDataset(filenames=self.test_filenames_A,
                                                   height=self.opt.height,
                                                   width=self.opt.width)
         self.test_dataloader_A = DataLoader(self.test_dataset_A, batch_size=1, shuffle=False,
@@ -102,30 +108,25 @@ class GanTester:
         Setup pred paths
         """
         self.save_path_dict = {}
-        self.pred_split_fold = "{}_{}_{}".format(self.opt.data_split_A, self.opt.data_split_B, self.fold)
-
         for key in ["real_A", "fake_B", "fake_A_cycle"]:
             self.save_path_dict[key] = os.path.join(self.opt.pred_dir, self.exp_name, key)
 
         if self.opt.save_real_A:
-            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["real_A"], "image_02"))
-            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["real_A"], "mask_02"))
+            io_utils.check_and_create_folder(self.save_path_dict["real_A"])
 
         if self.opt.save_fake_B:
-            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["fake_B"], "image_02"))
-            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["fake_B"], "mask_02"))
+            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["fake_B"]))
 
         if self.opt.save_fake_A_cycle:
-            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["fake_A_cycle"], "image_02"))
-            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["fake_A_cycle"], "mask_02"))
+            io_utils.check_and_create_folder(os.path.join(self.save_path_dict["fake_A_cycle"]))
 
     def predict(self):
         print("Running prediction on test dataset of Domain A...")
 
         # Save domain A
         for i, batch in enumerate(Bar(self.test_dataloader_A), 0):
-            real_A, mask_A, _ = batch
-            real_A, mask_A = real_A.to(self.device), mask_A.to(self.device)
+            real_A = batch
+            real_A = real_A.to(self.device)
 
             fake_B = self.netG_A2B(real_A)
             fake_A_cycle = self.netG_B2A(fake_B)
@@ -137,18 +138,13 @@ class GanTester:
             # save source images and mask also!!
             # save image files
             if self.opt.save_real_A:
-                save_image(real_A, os.path.join(self.save_path_dict["real_A"], "image_02", "{:06d}.png".format(i + 1)))
-                save_image(mask_A, os.path.join(self.save_path_dict["real_A"], "mask_02", "{:06d}.png".format(i + 1)))
+                save_image(real_A, os.path.join(self.save_path_dict["real_A"], "{:06d}.png".format(i + 1)))
 
             if self.opt.save_fake_B:
-                save_image(fake_B, os.path.join(self.save_path_dict["fake_B"], "image_02", "{:06d}.png".format(i + 1)))
-                save_image(mask_A, os.path.join(self.save_path_dict["fake_B"], "mask_02", "{:06d}.png".format(i + 1)))
+                save_image(fake_B, os.path.join(self.save_path_dict["fake_B"], "{:06d}.png".format(i + 1)))
 
             if self.opt.save_fake_A_cycle:
-                save_image(fake_A_cycle, os.path.join(self.save_path_dict["fake_A_cycle"], "image_02",
-                                                      "{:06d}.png".format(i + 1)))
-                save_image(mask_A, os.path.join(self.save_path_dict["fake_A_cycle"], "mask_02",
-                                                "{:06d}.png".format(i + 1)))
+                save_image(fake_A_cycle, os.path.join(self.save_path_dict["fake_A_cycle"], "{:06d}.png".format(i + 1)))
 
         if self.opt.save_video:
             video_path = os.path.join(self.opt.pred_dir, self.exp_name, self.pred_split_fold,

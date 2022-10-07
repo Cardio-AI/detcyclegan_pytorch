@@ -159,3 +159,41 @@ class MonoDatasetWithMaskTwoDomains(MonoDatasetWithMask):
 
     def __len__(self):
         return max(len(self.filenames_A), len(self.filenames_B))
+
+
+class MonoPredictionDataset(Dataset):
+    """ This dataset works with the endoscopic dataset which are in the format:
+    Surgery--> Video --> images which contain images
+
+    This mono class, works with split files which are text files that contain the
+    relative path and frame number.
+    The class reads the image file paths that are specified in the text file and loads the images.
+    It applies the specified transforms to the image, else it just converts it into a tensor.
+    :returns Pre-processed Image as a tensor
+    """
+
+    def __init__(self,
+                 filenames=None,
+                 height=448,
+                 width=448,
+                 image_ext='.png'):
+        super(MonoDataset).__init__()
+        self.filenames = filenames
+        self.height = height
+        self.width = width
+        self.image_ext = image_ext
+        self.resize = transforms.Resize((self.height, self.width))
+        self.image_loader = io_utils.pil_loader
+
+    def __len__(self):
+        return len(self.filenames)
+
+    def __getitem__(self, index):
+        """Returns the image with transforms applied to it"""
+        image = self.image_loader(self.filenames[index])
+        image = self.preprocess(image)
+        return image
+
+    def preprocess(self, image):
+        image = self.resize(image)  # Output: Resized PIL Image
+        return func.to_tensor(image)
